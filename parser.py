@@ -35,29 +35,17 @@ See the file script for an example of the file format
 def parse_file( fname, points, transform, screen, color ):
     file = open(fname, 'ru')
     commands = file.readlines()
-    point_matrix = new_matrix(4,4)
-    print("this is transform")
-    print (transform)
-    print_matrix(transform)
-
-    pass
     for i in range(len(commands)):
         command = commands[i]
         if command == "line\n":
             new_line = commands[i+1].split(" ")
-            add_edge(point_matrix, int(new_line[0]), int(new_line[1]), int(new_line[2]), int(new_line[3]), int(new_line[4]), int(new_line[5]))
+            add_edge(points, int(new_line[0]), int(new_line[1]), int(new_line[2]), int(new_line[3]), int(new_line[4]), int(new_line[5]))
         elif command == "ident\n":
             ident(transform)
         elif command == "scale\n":
             scale = commands[i+1].split(" ")
-            print(scale[0])
-            print(scale[1])
-
-            print(scale[2])
-            print_matrix(transform)
-
             matrix_mult(make_scale(float(scale[0]), float(scale[1]), float(scale[2])), transform)
-        elif command == "move\n":
+        elif command == "translate\n":
             trans = commands[i+1].split(" ")
             matrix_mult(make_translate(float(trans[0]), float(trans[1]), float(trans[2])), transform)
         elif command == "rotate\n":
@@ -69,28 +57,28 @@ def parse_file( fname, points, transform, screen, color ):
             else:
                 matrix_mult(make_rotZ(float(rotate[1])), transform)
         elif command == "apply\n":
-            matrix_mult(transform, point_matrix)
-        # elif command == "display\n":
-        #     print("JUST DISPLAY")
-        #
-        #     clear_screen(screen)
-        #     for r in range(len(point_matrix)):
-        #         for c in range(len(point_matrix[r])):
-        #             point_matrix[r][c] = int(point_matrix[r][c])
-        #     draw_lines(point_matrix, screen, color)
-        #     display(screen)
+            matrix_mult(transform, points)
+        # elif command == "color\n":
+        #     arr = commands[i+1].split(" ")
+        #     color = [ arr[0], arr[1], arr[2]]
+        #     print("\n\n\n\n" + repr(color))
+        elif command == "display\n":
+            print("JUST DISPLAY")
+            clear_screen(screen)
+            for r in range(len(points)):
+                for c in range(len(points[r])):
+                    points[r][c] = int(points[r][c])
+            draw_lines(points, screen, color)
+            display(screen)
         elif command == "save\n":
-            print("JUST SAVE")
-
             arr = commands[i + 1].split("\n")
-            for r in range(len(point_matrix)):
-                for c in range(len(point_matrix[r])):
-                    point_matrix[r][c] = int(point_matrix[r][c])
-            draw_lines(point_matrix, screen, color)
+            for r in range(len(points)):
+                for c in range(len(points[r])):
+                    points[r][c] = int(points[r][c])
+            draw_lines(points, screen, color)
             save_extension( screen, arr[0])
         elif command == "quit\n":
-            print("JUST QUIT")
+        #    print("JUST QUIT")
             break
         else:
-            pass
-    file.close()
+            print("didn't go: " +command)
